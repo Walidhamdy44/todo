@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
-import { Priority, TaskStatus } from '@/types';
 
 // GET /api/tasks - Get all tasks for current user
 export async function GET(request: NextRequest) {
@@ -13,7 +12,7 @@ export async function GET(request: NextRequest) {
         }
 
         const searchParams = request.nextUrl.searchParams;
-        const status = searchParams.get('status') as TaskStatus | null;
+        const status = searchParams.get('status') as any | null;
         const priority = searchParams.get('priority') as any | null;
         const category = searchParams.get('category');
 
