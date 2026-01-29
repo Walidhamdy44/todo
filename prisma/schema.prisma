@@ -1,0 +1,241 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// =====================================
+// User Model (synced with Clerk)
+// =====================================
+model User {
+  id          String   @id @default(cuid())
+  clerkUserId String   @unique @map("clerk_user_id")
+  email       String   @unique
+  name        String?
+  imageUrl    String?  @map("image_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  tasks        Task[]
+  courses      Course[]
+  readingItems ReadingItem[]
+  goals        Goal[]
+  lessons      Lesson[]
+
+  @@map("users")
+}
+
+// =====================================
+// Task Model (Work Tasks)
+// =====================================
+enum TaskStatus {
+  TODO        @map("todo")
+  IN_PROGRESS @map("in_progress")
+  DONE        @map("done")
+}
+
+enum Priority {
+  LOW    @map("low")
+  MEDIUM @map("medium")
+  HIGH   @map("high")
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  userId      String     @map("user_id")
+  title       String
+  description String?
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
+  category    String?
+  project     String?
+  deadline    DateTime?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([deadline])
+  @@map("tasks")
+}
+
+// =====================================
+// Course Model
+// =====================================
+enum CourseStatus {
+  NOT_STARTED @map("not_started")
+  IN_PROGRESS @map("in_progress")
+  COMPLETED   @map("completed")
+  PAUSED      @map("paused")
+}
+
+model Course {
+  id                   String       @id @default(cuid())
+  userId               String       @map("user_id")
+  name                 String
+  platform             String
+  status               CourseStatus @default(NOT_STARTED)
+  progress             Int          @default(0) // 0-100
+  nextLesson           String?      @map("next_lesson")
+  targetCompletionDate DateTime?    @map("target_completion_date")
+  totalHours           Float?       @map("total_hours")
+  completedHours       Float        @default(0) @map("completed_hours")
+  notes                String?
+  thumbnail            String?
+
+  // YouTube Integration
+  youtubeUrl   String? @map("youtube_url")
+  youtubeType  String? @map("youtube_type") // 'video' or 'playlist'
+  youtubeId    String? @map("youtube_id")
+  thumbnailUrl String? @map("thumbnail_url")
+  videoCount   Int?    @map("video_count")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessons Lesson[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("courses")
+}
+
+model Lesson {
+  id             String    @id @default(cuid())
+  courseId       String    @map("course_id")
+  userId         String    @map("user_id")
+  title          String
+  youtubeVideoId String?   @map("youtube_video_id")
+  thumbnailUrl   String?   @map("thumbnail_url")
+  duration       Int       @default(0) // in seconds
+  orderIndex     Int       @map("order_index")
+  isCompleted    Boolean   @default(false) @map("is_completed")
+  completedAt    DateTime? @map("completed_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([courseId])
+  @@index([userId])
+  @@map("lessons")
+}
+
+// =====================================
+// Reading Item Model
+// =====================================
+enum ReadingCategory {
+  TECHNICAL            @map("technical")
+  BUSINESS             @map("business")
+  PERSONAL_DEVELOPMENT @map("personal_development")
+}
+
+enum ReadingStatus {
+  TO_READ   @map("to_read")
+  READING   @map("reading")
+  COMPLETED @map("completed")
+}
+
+model ReadingItem {
+  id                   String          @id @default(cuid())
+  userId               String          @map("user_id")
+  title                String
+  source               String
+  sourceUrl            String?         @map("source_url")
+  category             ReadingCategory @default(TECHNICAL)
+  status               ReadingStatus   @default(TO_READ)
+  priority             Priority        @default(MEDIUM)
+  estimatedReadingTime Int?            @map("estimated_reading_time") // in minutes
+  tags                 String[]        @default([])
+  notes                String?
+  createdAt            DateTime        @default(now()) @map("created_at")
+  updatedAt            DateTime        @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([category])
+  @@map("reading_items")
+}
+
+// =====================================
+// Goal Model
+// =====================================
+enum GoalStatus {
+  ACTIVE    @map("active")
+  COMPLETED @map("completed")
+  PAUSED    @map("paused")
+}
+
+enum GoalTimeframe {
+  MONTHLY   @map("monthly")
+  QUARTERLY @map("quarterly")
+  YEARLY    @map("yearly")
+}
+
+model Goal {
+  id          String        @id @default(cuid())
+  userId      String        @map("user_id")
+  title       String
+  description String?
+  progress    Int           @default(0) // 0-100
+  status      GoalStatus    @default(ACTIVE)
+  timeframe   GoalTimeframe @default(QUARTERLY)
+  targetDate  DateTime?     @map("target_date")
+  milestones  Json          @default("[]") // Array of milestone objects
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("goals")
+}
+
+// =====================================
+// Activity Log Model (optional, for tracking)
+// =====================================
+enum ActivityType {
+  TASK_CREATED
+  TASK_COMPLETED
+  TASK_UPDATED
+  COURSE_STARTED
+  COURSE_COMPLETED
+  COURSE_PROGRESS
+  READING_ADDED
+  READING_COMPLETED
+  GOAL_CREATED
+  GOAL_MILESTONE
+  GOAL_COMPLETED
+}
+
+model Activity {
+  id        String       @id @default(cuid())
+  userId    String       @map("user_id")
+  type      ActivityType
+  action    String
+  title     String
+  entityId  String?      @map("entity_id")
+  metadata  Json?
+  createdAt DateTime     @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("activities")
+}
