@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         });
 
         // Transform to match frontend types
-        const transformedCourses = courses.map((course) => ({
+        const transformedCourses = courses.map((course: any) => ({
             id: course.id,
             name: course.name,
             platform: course.platform,
