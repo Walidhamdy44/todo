@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
-import { ReadingCategory, ReadingStatus, Priority } from '@prisma/client';
 
 interface RouteParams {
     params: Promise<{ id: string }>;
@@ -98,13 +97,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         }
 
         if (category !== undefined) {
-            updateData.category = category.toUpperCase().replace('-', '_') as ReadingCategory;
+            updateData.category = category.toUpperCase().replace('-', '_') as any;
         }
         if (priority !== undefined) {
-            updateData.priority = priority.toUpperCase() as Priority;
+            updateData.priority = priority.toUpperCase() as any;
         }
         if (status !== undefined) {
-            updateData.status = status.toUpperCase().replace('-', '_') as ReadingStatus;
+            updateData.status = status.toUpperCase().replace('-', '_') as any;
         }
 
         const item = await db.readingItem.update({

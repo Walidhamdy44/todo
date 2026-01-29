@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
-import { TaskStatus, Priority } from '@prisma/client';
+import { Priority } from '@/types';
 
 interface RouteParams {
     params: Promise<{ id: string }>;

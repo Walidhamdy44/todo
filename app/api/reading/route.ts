@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
-import { ReadingCategory, ReadingStatus, Priority } from '@prisma/client';
+import { Priority, ReadingCategory, ReadingStatus } from '@/types';
 
 // GET /api/reading - Get all reading items for current user
 export async function GET(request: NextRequest) {
@@ -19,8 +19,8 @@ export async function GET(request: NextRequest) {
         const items = await db.readingItem.findMany({
             where: {
                 userId: user.id,
-                ...(status && { status: status.toUpperCase().replace('-', '_') as ReadingStatus }),
-                ...(category && { category: category.toUpperCase().replace('-', '_') as ReadingCategory }),
+                ...(status && { status: status.toUpperCase().replace('-', '_') as any }),
+                ...(category && { category: category.toUpperCase().replace('-', '_') as any }),
             },
             orderBy: [
                 { priority: 'desc' },
@@ -78,11 +78,11 @@ export async function POST(request: NextRequest) {
 
         // Map frontend values to Prisma enums
         const prismaCategory = category ?
-            category.toUpperCase().replace('-', '_') as ReadingCategory :
+            category.toUpperCase().replace('-', '_') as any :
             'TECHNICAL';
-        const prismaPriority = priority?.toUpperCase() as Priority || 'MEDIUM';
+        const prismaPriority = priority?.toUpperCase() as any || 'MEDIUM';
         const prismaStatus = status ?
-            status.toUpperCase().replace('-', '_') as ReadingStatus :
+            status.toUpperCase().replace('-', '_') as any :
             'TO_READ';
 
         // Parse tags if it's a string

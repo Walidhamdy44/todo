@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
-import { TaskStatus, Priority } from '@prisma/client';
+import { Priority, TaskStatus } from '@/types';
 
 // GET /api/tasks - Get all tasks for current user
 export async function GET(request: NextRequest) {
@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
         const searchParams = request.nextUrl.searchParams;
         const status = searchParams.get('status') as TaskStatus | null;
-        const priority = searchParams.get('priority') as Priority | null;
+        const priority = searchParams.get('priority') as any | null;
         const category = searchParams.get('category');
 
         const tasks = await db.task.findMany({
@@ -74,14 +74,14 @@ export async function POST(request: NextRequest) {
             status === 'in-progress' ? 'IN_PROGRESS' :
                 status === 'done' ? 'DONE' : 'TODO';
 
-        const prismaPriority = priority?.toUpperCase() as Priority || 'MEDIUM';
+        const prismaPriority = priority?.toUpperCase() as any || 'MEDIUM';
 
         const task = await db.task.create({
             data: {
                 userId: user.id,
                 title,
                 description,
-                status: prismaStatus as TaskStatus,
+                status: prismaStatus as any,
                 priority: prismaPriority,
                 deadline: deadline ? new Date(deadline) : null,
                 category,

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
-import { GoalStatus, GoalTimeframe } from '@prisma/client';
+import { GoalStatus, GoalTimeframe } from '@/types';
 
 // GET /api/goals - Get all goals for current user
 export async function GET(request: NextRequest) {
@@ -19,8 +19,8 @@ export async function GET(request: NextRequest) {
         const goals = await db.goal.findMany({
             where: {
                 userId: user.id,
-                ...(status && { status: status.toUpperCase() as GoalStatus }),
-                ...(timeframe && { timeframe: timeframe.toUpperCase() as GoalTimeframe }),
+                ...(status && { status: status.toUpperCase() as any }),
+                ...(timeframe && { timeframe: timeframe.toUpperCase() as any }),
             },
             orderBy: [
                 { status: 'asc' },
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Map frontend values to Prisma enums
-        const prismaTimeframe = timeframe?.toUpperCase() as GoalTimeframe || 'QUARTERLY';
+        const prismaTimeframe = timeframe?.toUpperCase() as any || 'QUARTERLY';
 
         // Process milestones - add IDs if not present
         const processedMilestones = (milestones ?? []).map((m: { id?: string; title: string; isCompleted?: boolean }, index: number) => ({

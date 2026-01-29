@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
-import { GoalStatus, GoalTimeframe } from '@prisma/client';
 
 interface RouteParams {
     params: Promise<{ id: string }>;
@@ -99,10 +98,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         }
 
         if (status !== undefined) {
-            updateData.status = status.toUpperCase() as GoalStatus;
+            updateData.status = status.toUpperCase() as any;
         }
         if (timeframe !== undefined) {
-            updateData.timeframe = timeframe.toUpperCase() as GoalTimeframe;
+            updateData.timeframe = timeframe.toUpperCase() as any;
         }
 
         // Auto-calculate progress based on milestones

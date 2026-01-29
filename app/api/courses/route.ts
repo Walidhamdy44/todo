@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getCurrentUser } from '@/lib/auth';
-import { CourseStatus } from '@prisma/client';
 
 // GET /api/courses - Get all courses for current user
 export async function GET(request: NextRequest) {
@@ -19,7 +18,7 @@ export async function GET(request: NextRequest) {
         const courses = await db.course.findMany({
             where: {
                 userId: user.id,
-                ...(status && { status: status.toUpperCase().replace('-', '_') as CourseStatus }),
+                ...(status && { status: status.toUpperCase().replace('-', '_') as any }),
                 ...(platform && { platform }),
             },
             include: {
@@ -105,7 +104,7 @@ export async function POST(request: NextRequest) {
 
         // Map frontend status to Prisma enum
         const prismaStatus = status ?
-            status.toUpperCase().replace('-', '_') as CourseStatus :
+            status.toUpperCase().replace('-', '_') as any :
             'NOT_STARTED';
 
         // Create course
