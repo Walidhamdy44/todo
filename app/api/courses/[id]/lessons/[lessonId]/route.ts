@@ -46,7 +46,7 @@ export async function PATCH(
             select: { isCompleted: true }
         });
 
-        const completedCount = allLessons.filter(l => l.isCompleted).length;
+        const completedCount = allLessons.filter((l: { isCompleted: boolean }) => l.isCompleted).length;
         const totalCount = allLessons.length;
         const progress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 

@@ -36,6 +36,7 @@ export default function TasksPage() {
     const [categoryFilter, setCategoryFilter] = useState<string>('all');
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [formData, setFormData] = useState<Record<string, string>>({});
+    const [editingTask, setEditingTask] = useState<Task | null>(null);
 
     // Fetch tasks from API
     const { data: tasks, isLoading, refetch } = useTasks();
@@ -72,13 +73,25 @@ export default function TasksPage() {
     const handleStatusChange = async (taskId: string, newStatus: TaskStatus) => {
         const promise = updateTask(taskId, { status: newStatus });
         toast.promise(promise, {
-            loading: 'Updating task status...',
+            loading: `Moving to ${newStatus}...`,
             success: () => {
                 refetch();
-                return `Task marked as ${newStatus}`;
+                return `Task moved to ${newStatus}`;
             },
             error: 'Failed to update task'
         });
+    };
+
+    const handleEdit = (task: Task) => {
+        setEditingTask(task);
+        setFormData({
+            title: task.title,
+            description: task.description || '',
+            priority: task.priority,
+            deadline: task.deadline || '',
+            category: task.category || '',
+        });
+        setIsAddModalOpen(true);
     };
 
     const handleDelete = async (taskId: string) => {
@@ -98,24 +111,47 @@ export default function TasksPage() {
     };
 
     const handleSubmit = async () => {
-        const promise = createTask({
+        const taskData = {
             title: formData.title,
             description: formData.description,
             priority: formData.priority as Priority,
             deadline: formData.deadline,
             category: formData.category,
-        });
+        };
+
+        const promise = editingTask
+            ? updateTask(editingTask.id, taskData)
+            : createTask(taskData);
 
         toast.promise(promise, {
-            loading: 'Creating task...',
+            loading: editingTask ? 'Updating task...' : 'Creating task...',
             success: () => {
                 refetch();
                 setIsAddModalOpen(false);
                 setFormData({});
-                return 'Task created successfully';
+                setEditingTask(null);
+                return editingTask ? 'Task updated successfully' : 'Task created successfully';
             },
-            error: 'Failed to create task'
+            error: (err) => err.message || `Failed to ${editingTask ? 'update' : 'create'} task`
         });
+    };
+
+    const handleDragStart = (e: React.DragEvent, taskId: string) => {
+        e.dataTransfer.setData('taskId', taskId);
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    };
+
+    const handleDrop = (e: React.DragEvent, status: TaskStatus) => {
+        e.preventDefault();
+        const taskId = e.dataTransfer.getData('taskId');
+        if (taskId) {
+            handleStatusChange(taskId, status);
+        }
     };
 
     const statusColumns: { key: TaskStatus; label: string; color: string }[] = [
@@ -217,14 +253,24 @@ export default function TasksPage() {
                                 </div>
 
                                 {/* Column Content */}
-                                <div className="flex-1 space-y-3 min-h-[200px] p-3 rounded-2xl bg-zinc-100/50 dark:bg-zinc-800/30">
+                                <div
+                                    className="flex-1 space-y-3 min-h-[200px] p-3 rounded-2xl bg-zinc-100/50 dark:bg-zinc-800/30 transition-colors"
+                                    onDragOver={handleDragOver}
+                                    onDrop={(e) => handleDrop(e, key)}
+                                >
                                     {tasksByStatus[key].map(task => (
-                                        <TaskCard
+                                        <div
                                             key={task.id}
-                                            task={task}
-                                            onDelete={handleDelete}
-                                            isDraggable
-                                        />
+                                            draggable
+                                            onDragStart={(e) => handleDragStart(e, task.id)}
+                                        >
+                                            <TaskCard
+                                                task={task}
+                                                onEdit={handleEdit}
+                                                onDelete={handleDelete}
+                                                isDraggable
+                                            />
+                                        </div>
                                     ))}
                                     {tasksByStatus[key].length === 0 && (
                                         <div className="flex items-center justify-center h-32 text-zinc-400 dark:text-zinc-500 text-sm">
@@ -252,6 +298,7 @@ export default function TasksPage() {
                                     key={task.id}
                                     task={task}
                                     onStatusChange={handleStatusChange}
+                                    onEdit={handleEdit}
                                     onDelete={handleDelete}
                                 />
                             ))
@@ -262,9 +309,13 @@ export default function TasksPage() {
                 {/* Add Task Modal */}
                 <Modal
                     isOpen={isAddModalOpen}
-                    onClose={() => setIsAddModalOpen(false)}
-                    title="Add New Task"
-                    description="Create a new task to track your work"
+                    onClose={() => {
+                        setIsAddModalOpen(false);
+                        setEditingTask(null);
+                        setFormData({});
+                    }}
+                    title={editingTask ? "Edit Task" : "Add New Task"}
+                    description={editingTask ? "Update the details of your task" : "Create a new task to track your work"}
                     size="lg"
                 >
                     <div className="space-y-4">
@@ -307,11 +358,15 @@ export default function TasksPage() {
                         />
                     </div>
                     <ModalFooter>
-                        <Button variant="ghost" onClick={() => setIsAddModalOpen(false)}>
+                        <Button variant="ghost" onClick={() => {
+                            setIsAddModalOpen(false);
+                            setEditingTask(null);
+                            setFormData({});
+                        }}>
                             Cancel
                         </Button>
                         <Button onClick={handleSubmit} isLoading={mutating}>
-                            Create Task
+                            {editingTask ? "Update Task" : "Create Task"}
                         </Button>
                     </ModalFooter>
                 </Modal>
