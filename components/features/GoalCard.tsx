@@ -14,8 +14,8 @@ interface GoalCardProps {
 }
 
 export function GoalCard({ goal, onEdit, onDelete, className }: GoalCardProps) {
-    const completedMilestones = goal.milestones.filter((m) => m.isCompleted).length;
-    const totalMilestones = goal.milestones.length;
+    const completedMilestones = goal.milestones?.filter((m) => m.isCompleted).length || 0;
+    const totalMilestones = goal.milestones?.length || 0;
 
     const getTimeframeColor = (timeframe: string) => {
         const colors: Record<string, 'primary' | 'warning' | 'success'> = {
@@ -84,7 +84,7 @@ export function GoalCard({ goal, onEdit, onDelete, className }: GoalCardProps) {
                     </span>
                 </div>
                 <div className="space-y-2">
-                    {goal.milestones.slice(0, 3).map((milestone) => (
+                    {goal.milestones?.slice(0, 3).map((milestone) => (
                         <div
                             key={milestone.id}
                             className="flex items-center gap-2 text-sm"
@@ -106,23 +106,25 @@ export function GoalCard({ goal, onEdit, onDelete, className }: GoalCardProps) {
                             </span>
                         </div>
                     ))}
-                    {goal.milestones.length > 3 && (
+                    {(goal.milestones?.length || 0) > 3 && (
                         <p className="text-xs text-zinc-400 dark:text-zinc-500 pl-6">
-                            +{goal.milestones.length - 3} more milestones
+                            +{(goal.milestones?.length || 0) - 3} more milestones
                         </p>
                     )}
                 </div>
             </div>
 
             {/* Target Date */}
-            <div className="flex items-center gap-2 mt-4 text-sm text-zinc-500 dark:text-zinc-400">
-                <Calendar className="w-4 h-4" />
-                Target: {new Date(goal.targetDate).toLocaleDateString('en-US', {
-                    month: 'long',
-                    day: 'numeric',
-                    year: 'numeric'
-                })}
-            </div>
+            {goal.targetDate && (
+                <div className="flex items-center gap-2 mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+                    <Calendar className="w-4 h-4" />
+                    Target: {new Date(goal.targetDate).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric'
+                    })}
+                </div>
+            )}
         </Card>
     );
 }

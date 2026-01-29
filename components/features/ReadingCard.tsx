@@ -41,14 +41,16 @@ export function ReadingCard({ item, onEdit, onDelete, className }: ReadingCardPr
         <Card className={cn('group relative', className)} padding="md" hover>
             {/* Action buttons */}
             <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
-                <a
-                    href={item.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-400 hover:text-blue-500 transition-colors"
-                >
-                    <ExternalLink className="w-4 h-4" />
-                </a>
+                {item.sourceUrl && (
+                    <a
+                        href={item.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-400 hover:text-blue-500 transition-colors"
+                    >
+                        <ExternalLink className="w-4 h-4" />
+                    </a>
+                )}
                 {onEdit && (
                     <button
                         onClick={() => onEdit(item)}
@@ -85,15 +87,17 @@ export function ReadingCard({ item, onEdit, onDelete, className }: ReadingCardPr
             </p>
 
             {/* Meta */}
-            <div className="flex items-center gap-4 mt-4">
-                <div className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400">
-                    <Clock className="w-4 h-4" />
-                    {formatReadingTime(item.estimatedReadingTime)}
+            {item.estimatedReadingTime && (
+                <div className="flex items-center gap-4 mt-4">
+                    <div className="flex items-center gap-1.5 text-sm text-zinc-500 dark:text-zinc-400">
+                        <Clock className="w-4 h-4" />
+                        {formatReadingTime(item.estimatedReadingTime)}
+                    </div>
                 </div>
-            </div>
+            )}
 
             {/* Tags */}
-            {item.tags.length > 0 && (
+            {item.tags && item.tags.length > 0 && (
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex-wrap">
                     {item.tags.slice(0, 3).map((tag) => (
                         <span
