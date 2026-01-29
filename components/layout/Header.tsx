@@ -12,6 +12,7 @@ interface HeaderProps {
     onQuickAdd?: () => void;
     quickAddLabel?: string;
     backAction?: () => void;
+    showSearch?: boolean;
     children?: React.ReactNode;
 }
 
@@ -21,6 +22,7 @@ export function Header({
     onQuickAdd,
     quickAddLabel = 'Add New',
     backAction,
+    showSearch = true,
     children
 }: HeaderProps) {
     return (
@@ -53,25 +55,27 @@ export function Header({
                     {/* Custom children */}
                     {children}
                     {/* Search */}
-                    <div className="hidden md:flex items-center">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                            <input
-                                type="text"
-                                placeholder="Search..."
-                                className={cn(
-                                    'w-64 pl-10 pr-4 py-2 rounded-xl',
-                                    'bg-zinc-100 dark:bg-zinc-800/50',
-                                    'border border-transparent',
-                                    'text-sm text-zinc-900 dark:text-zinc-100',
-                                    'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
-                                    'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-zinc-800',
-                                    'focus:border-blue-500',
-                                    'transition-all duration-200'
-                                )}
-                            />
+                    {showSearch && (
+                        <div className="hidden md:flex items-center">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    className={cn(
+                                        'w-64 pl-10 pr-4 py-2 rounded-xl',
+                                        'bg-zinc-100 dark:bg-zinc-800/50',
+                                        'border border-transparent',
+                                        'text-sm text-zinc-900 dark:text-zinc-100',
+                                        'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                        'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white dark:focus:bg-zinc-800',
+                                        'focus:border-blue-500',
+                                        'transition-all duration-200'
+                                    )}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Quick Add Button */}
                     {onQuickAdd && (

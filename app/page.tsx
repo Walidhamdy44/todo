@@ -11,6 +11,7 @@ import {
   TrendingUp,
   Loader2
 } from 'lucide-react';
+import { useUser } from '@clerk/nextjs';
 import { Header, PageContainer } from '@/components/layout';
 import { Card, CardHeader, CardTitle, CardContent, Button, Modal, ModalFooter, Input, Select, Textarea } from '@/components/ui';
 import {
@@ -36,6 +37,7 @@ import {
 type QuickAddType = 'task' | 'course' | 'reading' | 'goal' | null;
 
 export default function DashboardPage() {
+  const { user } = useUser();
   const [quickAddType, setQuickAddType] = useState<QuickAddType>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
 
@@ -146,8 +148,9 @@ export default function DashboardPage() {
   return (
     <>
       <Header
-        title={`${getGreeting()}! 👋`}
+        title={`${getGreeting()}${user?.firstName ? `, ${user.firstName}` : ''}! 👋`}
         subtitle={formatDate()}
+        showSearch={false}
       />
       <PageContainer>
         {/* Stats Cards */}
