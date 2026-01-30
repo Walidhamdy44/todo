@@ -212,7 +212,7 @@ export function VoiceAssistantButton({ onCommandExecuted, className }: VoiceAssi
                   Close
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   onClick={() => {
                     setShowResults(false);
                     resetTranscript();
