@@ -11,6 +11,9 @@ importers:
       '@clerk/nextjs':
         specifier: ^6.37.0
         version: 6.37.1(next@16.1.6(@babel/core@7.28.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      '@google/generative-ai':
+        specifier: ^0.4.0
+        version: 0.4.0
       '@prisma/adapter-pg':
         specifier: ^7.3.0
         version: 7.3.0
@@ -295,6 +298,10 @@ packages:
 
   '@floating-ui/utils@0.2.10':
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
+
+  '@google/generative-ai@0.4.0':
+    resolution: {integrity: sha512-AtVXUKT28MtRbyl48vx4o2l+oUsNhM8iqgV6ynkNV9KMWuPUdwYeKvmiVvsHQENFMRBb+tcmiwcPcjs0d4psUQ==}
+    engines: {node: '>=18.0.0'}
 
   '@hono/node-server@1.19.9':
     resolution: {integrity: sha512-vHL6w3ecZsky+8P5MD+eFfaGTyCeOHUIFYMGpQGbrBTSmNNoxv0if69rEZ5giu36weC5saFuznL411gRX7bJDw==}
@@ -3065,6 +3072,8 @@ snapshots:
       react-dom: 19.2.3(react@19.2.3)
 
   '@floating-ui/utils@0.2.10': {}
+
+  '@google/generative-ai@0.4.0': {}
 
   '@hono/node-server@1.19.9(hono@4.11.4)':
     dependencies:
