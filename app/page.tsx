@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   CheckSquare,
   GraduationCap,
@@ -20,9 +20,7 @@ import {
   ActivityFeed,
   TaskCard,
   CourseCard,
-  GoalCard,
-  VoiceAssistantButton,
-  VoiceAssistantDialog
+  GoalCard
 } from '@/components/features';
 import {
   useDashboardStats,
@@ -42,7 +40,6 @@ export default function DashboardPage() {
   const { user } = useUser();
   const [quickAddType, setQuickAddType] = useState<QuickAddType>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
-  const [isVoiceDialogOpen, setIsVoiceDialogOpen] = useState(false);
 
   // Fetch data using hooks
   const { data: stats, isLoading: statsLoading } = useDashboardStats();
@@ -148,39 +145,13 @@ export default function DashboardPage() {
 
   const isSubmitting = taskLoading || courseLoading || readingLoading || goalLoading;
 
-  // Keyboard shortcut for voice assistant (Alt+V)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.altKey || e.metaKey) && e.key === 'v') {
-        e.preventDefault();
-        setIsVoiceDialogOpen(true);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  const handleVoiceCommandExecuted = async () => {
-    // Refetch data to update UI after voice command
-    refetchTasks();
-    refetchCourses();
-    refetchGoals();
-    refetchActivities();
-  };
-
   return (
     <>
       <Header
         title={`${getGreeting()}${user?.firstName ? `, ${user.firstName}` : ''}! 👋`}
         subtitle={formatDate()}
         showSearch={false}
-      >
-        <VoiceAssistantButton
-          onClick={() => setIsVoiceDialogOpen(true)}
-          isListening={isVoiceDialogOpen}
-        />
-      </Header>
+      />
       <PageContainer>
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -630,13 +601,6 @@ export default function DashboardPage() {
             </Button>
           </ModalFooter>
         </Modal>
-
-        {/* Voice Assistant Dialog */}
-        <VoiceAssistantDialog
-          isOpen={isVoiceDialogOpen}
-          onClose={() => setIsVoiceDialogOpen(false)}
-          onCommandExecuted={handleVoiceCommandExecuted}
-        />
       </PageContainer>
     </>
   );
