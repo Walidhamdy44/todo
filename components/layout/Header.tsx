@@ -5,6 +5,7 @@ import { Search, Bell, Plus, ChevronLeft } from 'lucide-react';
 import { UserButton, SignedIn, SignedOut, SignInButton } from '@clerk/nextjs';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui';
+import { VoiceAssistantButton } from '@/components/voice-assistant';
 
 interface HeaderProps {
     title: string;
@@ -54,6 +55,8 @@ export function Header({
                 <div className="flex items-center gap-3">
                     {/* Custom children */}
                     {children}
+                    {/* Voice Assistant */}
+                    <VoiceAssistantButton />
                     {/* Search */}
                     {showSearch && (
                         <div className="hidden md:flex items-center">
