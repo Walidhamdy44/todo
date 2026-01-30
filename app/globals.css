@@ -219,3 +219,7 @@
 ::selection {
   @apply bg-blue-500/20;
 }
+
+.cl-internal-1dauvpw {
+  display: none !important;
+}
