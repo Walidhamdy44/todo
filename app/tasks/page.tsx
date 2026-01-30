@@ -22,6 +22,7 @@ import {
     Badge,
     Textarea
 } from '@/components/ui';
+import { VoiceEnabledInput, VoiceEnabledTextarea } from '@/components/forms/VoiceEnabledInput';
 import { TaskCard, TaskListItem } from '@/components/features';
 import { useTasks, useTaskMutations } from '@/hooks';
 import type { Task, Priority, TaskStatus } from '@/types';
@@ -319,17 +320,19 @@ export default function TasksPage() {
                     size="lg"
                 >
                     <div className="space-y-4">
-                        <Input
+                        <VoiceEnabledInput
                             label="Task Title"
                             placeholder="Enter task title"
                             value={formData.title || ''}
                             onChange={(e) => handleFormChange('title', e.target.value)}
+                            voiceEnabled={true}
                         />
-                        <Textarea
+                        <VoiceEnabledTextarea
                             label="Description"
                             placeholder="Enter task description"
                             value={formData.description || ''}
                             onChange={(e) => handleFormChange('description', e.target.value)}
+                            voiceEnabled={true}
                         />
                         <div className="grid grid-cols-2 gap-4">
                             <Select
@@ -350,11 +353,12 @@ export default function TasksPage() {
                                 onChange={(e) => handleFormChange('deadline', e.target.value)}
                             />
                         </div>
-                        <Input
+                        <VoiceEnabledInput
                             label="Category"
                             placeholder="e.g., Development, Design"
                             value={formData.category || ''}
                             onChange={(e) => handleFormChange('category', e.target.value)}
+                            voiceEnabled={true}
                         />
                     </div>
                     <ModalFooter>

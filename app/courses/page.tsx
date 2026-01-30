@@ -12,6 +12,7 @@ import {
     Button,
     Textarea
 } from '@/components/ui';
+import { VoiceEnabledInput, VoiceEnabledTextarea } from '@/components/forms/VoiceEnabledInput';
 import { CourseCard } from '@/components/features';
 import { useCourses, useCourseMutations } from '@/hooks';
 import type { CourseStatus } from '@/types';
@@ -327,11 +328,12 @@ export default function CoursesPage() {
                             </div>
                         )}
 
-                        <Input
+                        <VoiceEnabledInput
                             label="Course Name"
                             placeholder="Enter course name"
                             value={formData.name || ''}
                             onChange={(e) => handleFormChange('name', e.target.value)}
+                            voiceEnabled={true}
                         />
                         <Select
                             label="Platform"
@@ -364,11 +366,12 @@ export default function CoursesPage() {
                                 onChange={(e) => handleFormChange('targetDate', e.target.value)}
                             />
                         </div>
-                        <Textarea
+                        <VoiceEnabledTextarea
                             label="Notes"
                             placeholder="Add any notes about this course..."
                             value={formData.notes || ''}
                             onChange={(e) => handleFormChange('notes', e.target.value)}
+                            voiceEnabled={true}
                         />
                     </div>
                     <ModalFooter>
