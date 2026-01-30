@@ -11,6 +11,7 @@ import {
     ModalFooter,
     Button
 } from '@/components/ui';
+import { VoiceEnabledInput } from '@/components/forms/VoiceEnabledInput';
 import { ReadingCard } from '@/components/features';
 import { useReadingItems, useReadingMutations } from '@/hooks';
 import type { ReadingStatus, ReadingCategory, Priority } from '@/types';
@@ -243,17 +244,19 @@ export default function ReadingPage() {
                     size="lg"
                 >
                     <div className="space-y-4">
-                        <Input
+                        <VoiceEnabledInput
                             label="Title"
                             placeholder="Enter title"
                             value={formData.title || ''}
                             onChange={(e) => handleFormChange('title', e.target.value)}
+                            voiceEnabled={true}
                         />
-                        <Input
+                        <VoiceEnabledInput
                             label="Source"
                             placeholder="e.g., Medium, Book, Blog"
                             value={formData.source || ''}
                             onChange={(e) => handleFormChange('source', e.target.value)}
+                            voiceEnabled={true}
                         />
                         <Input
                             label="Source URL"
@@ -292,11 +295,12 @@ export default function ReadingPage() {
                             value={formData.estimatedTime || ''}
                             onChange={(e) => handleFormChange('estimatedTime', e.target.value)}
                         />
-                        <Input
+                        <VoiceEnabledInput
                             label="Tags (comma-separated)"
                             placeholder="react, performance, optimization"
                             value={formData.tags || ''}
                             onChange={(e) => handleFormChange('tags', e.target.value)}
+                            voiceEnabled={true}
                         />
                     </div>
                     <ModalFooter>

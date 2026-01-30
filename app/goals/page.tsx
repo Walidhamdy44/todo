@@ -17,6 +17,7 @@ import {
     ProgressBar,
     CircularProgress
 } from '@/components/ui';
+import { VoiceEnabledInput, VoiceEnabledTextarea } from '@/components/forms/VoiceEnabledInput';
 import { GoalCard } from '@/components/features';
 import { useGoals, useGoalMutations } from '@/hooks';
 import type { GoalStatus, GoalTimeframe } from '@/types';
@@ -277,17 +278,19 @@ export default function GoalsPage() {
                     size="lg"
                 >
                     <div className="space-y-4">
-                        <Input
+                        <VoiceEnabledInput
                             label="Goal Title"
                             placeholder="e.g., Become a Senior Developer"
                             value={formData.title || ''}
                             onChange={(e) => handleFormChange('title', e.target.value)}
+                            voiceEnabled={true}
                         />
-                        <Textarea
+                        <VoiceEnabledTextarea
                             label="Description"
                             placeholder="Describe your goal and what success looks like..."
                             value={formData.description || ''}
                             onChange={(e) => handleFormChange('description', e.target.value)}
+                            voiceEnabled={true}
                         />
                         <div className="grid grid-cols-2 gap-4">
                             <Select
@@ -315,11 +318,12 @@ export default function GoalsPage() {
                             </label>
                             <div className="space-y-2">
                                 {milestones.map((milestone, index) => (
-                                    <Input
+                                    <VoiceEnabledInput
                                         key={index}
                                         placeholder={`Milestone ${index + 1}`}
                                         value={milestone}
                                         onChange={(e) => handleMilestoneChange(index, e.target.value)}
+                                        voiceEnabled={true}
                                     />
                                 ))}
                             </div>
